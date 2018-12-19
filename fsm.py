@@ -65,14 +65,14 @@ class TocMachine(GraphMachine):
     def is_going_to_funPhoto(self, event):
         if event.get("message"):     
             text = event['message']['text']
-            if text.find('梗圖') > -1:
+            if text.find('梗圖') > -1 or text.find('醜照') > -1:
                 return True
         return False       
     def on_enter_user(self, event):
         print("I'm entering user state")
 
         sender_id = event['sender']['id']
-        responese = send_text_message(sender_id, "你好啊!我是系排吉祥物-巨石彥瑋哦！很高興為你服務^^！\n可以詢問我一些關於系排的事情哦，只要是我能回答你的我都很樂意幫忙哦！\n(輸入提示：成員、戰績、系排趣事、梗圖）")
+        responese = send_text_message(sender_id, "你好啊!我是系排吉祥物-巨石彥瑋哦！很高興為你服務^^！\n可以詢問我一些關於系排的事情哦，只要是我能回答你的我都很樂意幫忙哦！\n(輸入提示：成員、戰績、梗圖）")
     def on_enter_askMemb(self, event):
         print("I'm entering state1")
         sender_id = event['sender']['id']
@@ -81,9 +81,14 @@ class TocMachine(GraphMachine):
         print("I'm entering funPhoto")
         rand = random.randint(0,len(url))
         sender_id = event['sender']['id']
-        
         responese = send_text_message(sender_id, "好的 稍等我一下！")  
         responese = send_image_message(sender_id,url[rand])
+        rand = random.randint(0,len(url))
+        responese = send_image_message(sender_id,url[rand])
+        rand = random.randint(0,len(url))
+        responese = send_image_message(sender_id,url[rand])        
+        time.sleep(1)
+        responese = send_text_message(sender_id, "喜歡的話可以右鍵儲存哦A___A！")          
         self.go_back()
 
     def on_enter_showMembInfo(self, event):
