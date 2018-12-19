@@ -1,9 +1,11 @@
 from transitions.extensions import GraphMachine
 
 from utils import send_text_message
+from utils import send_image_message
 import time
 import data
-member = ['張祐禎','朱浩澤','歐子毓','黃彥瑋','洪培軒','黃聖宇','陳奕辰','林辰臻','蘇子勻','王鴻縉']
+import random
+from data import url
 chosenMemb = data.membDict['張祐禎']
 none_flag = 0
 class TocMachine(GraphMachine):
@@ -60,6 +62,12 @@ class TocMachine(GraphMachine):
                 return True
             # return text.lower() == '我想問系排歷屆戰績'
         return False
+    def is_going_to_funPhoto(self, event):
+        if event.get("message"):     
+            text = event['message']['text']
+            if text.find('梗圖') > -1:
+                return True
+        return False       
     def on_enter_user(self, event):
         print("I'm entering user state")
 
@@ -67,16 +75,24 @@ class TocMachine(GraphMachine):
         responese = send_text_message(sender_id, "你好啊!我是系排吉祥物-巨石彥瑋哦！很高興為你服務^^！\n可以詢問我一些關於系排的事情哦，只要是我能回答你的我都很樂意幫忙哦！\n(輸入提示：成員、戰績、系排趣事、梗圖）")
     def on_enter_askMemb(self, event):
         print("I'm entering state1")
-
         sender_id = event['sender']['id']
         responese = send_text_message(sender_id, "你想問哪個球員呢？")
-  
+    def on_enter_funPhoto(self, event):
+        print("I'm entering funPhoto")
+        rand = random.randint(0,len(url))
+        sender_id = event['sender']['id']
+        
+        responese = send_text_message(sender_id, "好的 稍等我一下！")  
+        responese = send_image_message(sender_id,url[rand])
+        self.go_back()
+
     def on_enter_showMembInfo(self, event):
         print("I'm entering state1")
         sender_id = event['sender']['id']
         global none_flag
         if none_flag!=1:
-            responese = send_text_message(sender_id,"球員:"+chosenMemb.name+"\n"+"性別:"+chosenMemb.gender+'\n'+"年級:"+chosenMemb.grade+'\n'+"擅長位置:"+chosenMemb.place+'\n'+"介紹:"+chosenMemb.intro)
+            responese = send_text_message(sender_id,"球員:"+chosenMemb.name+"\n"+"性別:"+chosenMemb.gender+'\n'+"年級:"+chosenMemb.grade+'\n'+"擅長位置:"+chosenMemb.place+'\n'+"介紹:\n"+chosenMemb.intro)
+            responese = send_image_message(sender_id,chosenMemb.url)
         else:
             responese = send_text_message(sender_id,'沒有這位球員哦')
             none_flag = 0

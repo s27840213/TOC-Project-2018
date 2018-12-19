@@ -4,14 +4,15 @@ from bottle import route, run, request, abort, static_file
 from fsm import TocMachine
 
 #EAAG2a0mVCxkBAOAtOoutGZBvXkKbrzReE6TZB5LcBg7XG652WJtMkTP1IaFZCTG7Pz86qGJ2bqkgvITGcXe8xZCn3GzFKiFGs6qhaRM7O99N3f56lDufWD2xH0EFCxBiZCvGE6xPIxZBiLl4UOZAKMl4RCkYVGJW3PXRKE7cxkuGAZDZD
-VERIFY_TOKEN = "EAAG2a0mVCxkBAPqSaS2QZCPGRHu5hqyDnXlZAiFrB6gJ8ndi0fye64C5ma4x6LPhTxIAPLG9a21kZAJZAHYuU07N8nlZANzV8lBHEZAkIyZBaeNDqaQbaEuoqZAepkVLj2wEj5BPKXKw70YilH1tUZCHktPriwvU7aZAh4wtULxAFdYQZDZD"
+VERIFY_TOKEN = "EAAG2a0mVCxkBAHwSDiL9UQggacpBN5WZBpOegMeEuM4C6096ehWdYeeW5gZBYK6VizqiE2ZAnpYZAgD7cOIiMsbgYSEAE293eZCpVEWMvTMoS0EwZCf6oZCLimK3nzNQZASYdEdSUAd3uIr2HR8J8eTTSqztZCCps5Gh0eWHlT6lxXwZDZD"
 machine = TocMachine(
     states=[
         'init',
         'user',
         'askMemb',
         'askRecord',
-        'showMembInfo'
+        'showMembInfo',
+        'funPhoto'
     ],
     transitions=[
         {
@@ -34,6 +35,18 @@ machine = TocMachine(
         },
         {
             'trigger': 'advance',
+            'source': 'user',
+            'dest': 'funPhoto',
+            'conditions': 'is_going_to_funPhoto'
+        },
+        #         {
+        #     'trigger': 'advance',
+        #     'source': 'funPhoto',
+        #     'dest': 'funPhoto',
+        #     'conditions': 'is_going_to_funPhoto'
+        # },        
+        {
+            'trigger': 'advance',
             'source': 'askMemb',
             'dest': 'showMembInfo',
             'conditions': 'is_going_to_showMembInfo'
@@ -50,6 +63,7 @@ machine = TocMachine(
                 'askMemb',
                 'askRecord',
                 'showMembInfo',
+                'funPhoto'
             ],
             'dest': 'init'
         }
